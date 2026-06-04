@@ -6,3 +6,8 @@ docs/
 *.tar.gz
 *.bin
 *.json
+
+# Environment / secrets
+.env
+.env.local
+.env*.local
