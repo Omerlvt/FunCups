@@ -8,6 +8,10 @@ docs/
 *.json
 !remotion/**/*.json
 
+# Remotion
+remotion/node_modules/
+remotion/out/
+
 # Environment / secrets
 .env
 .env.local
