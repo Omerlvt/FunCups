@@ -1,13 +1,18 @@
-import Image from 'next/image'
 import SectionHead from '@/components/SectionHead'
 
-const ORDER_PHOTOS = [
-  'IMG_3322.JPG', 'IMG_3324.JPG', 'IMG_3326.JPG', 'IMG_3327.JPG',
-  'IMG_3329.JPG', 'IMG_3330.JPG', 'IMG_3331.JPG', 'IMG_3333.JPG',
+const LABELS = [
+  'ריטה לין.svg',
+  'Juan Moore.svg',
+  'Phil Mccup.svg',
+  'מור פיום.svg',
+  'Jen Antonic.svg',
+  'Kenya Pourit.svg',
+  'ציפי רילקס.svg',
+  'Roman Coke.svg',
 ]
 
 export default function RealOrdersMarquee() {
-  const doubled = [...ORDER_PHOTOS, ...ORDER_PHOTOS]
+  const doubled = [...LABELS, ...LABELS]
 
   return (
     <section id="orders" className="py-24 bg-bg overflow-hidden">
@@ -20,18 +25,19 @@ export default function RealOrdersMarquee() {
         <div className="fc-fade fc-fade-l" />
         <div className="fc-fade fc-fade-r" />
         <div className="fc-marquee-track">
-          {doubled.map((photo, i) => (
+          {doubled.map((label, i) => (
             <div
               key={i}
-              className="flex-shrink-0 rounded-md overflow-hidden border border-black/[0.08]"
-              style={{ width: 208, height: 208, margin: '0 12px' }}
+              className="flex-shrink-0 rounded-md overflow-hidden"
+              style={{ width: 400, height: 174, margin: '0 12px' }}
             >
-              <Image
-                src={`/photos/${photo}`}
-                alt="הזמנה של לקוח"
-                width={208}
-                height={208}
-                className="object-cover w-full h-full"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/labels/${encodeURIComponent(label)}`}
+                alt={label.replace('.svg', '')}
+                width={400}
+                height={174}
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             </div>
           ))}
