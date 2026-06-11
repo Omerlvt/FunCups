@@ -7,6 +7,7 @@ docs/
 *.bin
 *.json
 !remotion/**/*.json
+!remotion/public/photos/
 
 # Remotion
 remotion/node_modules/
