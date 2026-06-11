@@ -9,6 +9,8 @@ import {
   TOTAL_FRAMES,
 } from "../constants";
 
+useGLTF.preload("/cup.glb");
+
 export function CupModel() {
   const frame = useCurrentFrame();
   const { scene } = useGLTF("/cup.glb");

@@ -1,6 +1,7 @@
 // remotion/src/components/CupScene.tsx
 import { ThreeCanvas } from "@remotion/three";
 import { useThree } from "@react-three/fiber";
+import { Suspense } from "react";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
 import { BG_COLOR, BEAT_REVEAL_END } from "../constants";
 import { CupModel } from "./CupModel";
@@ -58,8 +59,10 @@ export function CupScene({
       {/* Animated camera */}
       <CameraController z={cameraZ} y={cameraY} lookAtY={cameraLookAtY} />
 
-      {/* The cup */}
-      <CupModel />
+      {/* The cup — Suspense required because useGLTF throws a Promise while loading */}
+      <Suspense fallback={null}>
+        <CupModel />
+      </Suspense>
     </ThreeCanvas>
   );
 }
