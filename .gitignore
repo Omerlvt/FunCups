@@ -6,6 +6,7 @@ docs/
 *.tar.gz
 *.bin
 *.json
+!remotion/*.json
 
 # Environment / secrets
 .env

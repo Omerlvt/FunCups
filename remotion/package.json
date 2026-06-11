@@ -1,0 +1,22 @@
+{
+  "name": "funcups-remotion",
+  "version": "1.0.0",
+  "scripts": {
+    "studio": "remotion studio",
+    "render:desktop": "remotion render HeroDesktop out/hero-desktop.mp4",
+    "render:mobile": "remotion render HeroMobile out/hero-mobile.mp4",
+    "render": "npm run render:desktop && npm run render:mobile"
+  },
+  "dependencies": {
+    "@react-three/drei": "9.99.0",
+    "@react-three/fiber": "8.15.12",
+    "@remotion/cli": "4.0.215",
+    "@remotion/three": "4.0.215",
+    "remotion": "4.0.215",
+    "three": "0.160.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.160.0",
+    "typescript": "^5.3.0"
+  }
+}
