@@ -1,7 +1,7 @@
 // remotion/src/components/CupModel.tsx
 import { useGLTF } from "@react-three/drei";
 import { useMemo } from "react";
-import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { Easing, interpolate, staticFile, useCurrentFrame } from "remotion";
 import {
   BEAT_REVEAL_END,
   BEAT_ROTATE_END,
@@ -9,11 +9,11 @@ import {
   TOTAL_FRAMES,
 } from "../constants";
 
-useGLTF.preload("/cup.glb");
+useGLTF.preload(staticFile("cup.glb"));
 
 export function CupModel() {
   const frame = useCurrentFrame();
-  const { scene } = useGLTF("/cup.glb");
+  const { scene } = useGLTF(staticFile("cup.glb"));
   // Clone so parallel Remotion render workers don't share the same Three.js object
   const clonedScene = useMemo(() => scene.clone(true), [scene]);
 
