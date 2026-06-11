@@ -15,6 +15,7 @@ function CameraController({ z, y, lookAtY }: CameraControllerProps) {
   const { camera } = useThree();
   camera.position.set(0, y, z);
   camera.lookAt(0, lookAtY, 0);
+  camera.updateProjectionMatrix();
   return null;
 }
 
@@ -44,11 +45,10 @@ export function CupScene({
   });
 
   return (
-    <ThreeCanvas
-      width={width}
-      height={height}
-      style={{ backgroundColor: BG_COLOR }}
-    >
+    <ThreeCanvas width={width} height={height}>
+      {/* Scene background — set via Three.js so WebGL renderer respects it in headless MP4 renders */}
+      <color attach="background" args={[BG_COLOR]} />
+
       {/* Lighting */}
       <ambientLight intensity={0.4} color="#fff8f0" />
       <directionalLight position={[-3, 4, 3]} intensity={1.2} />
