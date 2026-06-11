@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, useGLTF } from '@react-three/drei'
+import { OrbitControls, useGLTF, Center } from '@react-three/drei'
 import * as THREE from 'three'
 import { drawLabel, type LabelFields } from './LabelCanvas'
 
@@ -14,7 +14,7 @@ export default function CupViewer({ name, warning, className }: CupViewerProps) 
   return (
     <div className={className} style={{ background: '#F5F0E8' }}>
       <Canvas
-        camera={{ position: [0, 0, 3], fov: 45 }}
+        camera={{ position: [0, 0.2, 2], fov: 38 }}
         style={{ width: '100%', height: '100%' }}
       >
         <ambientLight intensity={1.2} />
@@ -26,8 +26,6 @@ export default function CupViewer({ name, warning, className }: CupViewerProps) 
         <OrbitControls
           enableZoom={false}
           enablePan={false}
-          autoRotate
-          autoRotateSpeed={1.5}
         />
       </Canvas>
     </div>
@@ -53,6 +51,11 @@ function CupScene({ name, warning }: LabelFields) {
       textureRef.current = new THREE.CanvasTexture(canvasRef.current)
       textureRef.current.flipY = false
     }
+
+    // Hide the studio backdrop — it's huge and fills the entire view
+    scene.traverse((child) => {
+      if (child.name === 'Backdrop Round') child.visible = false
+    })
 
     if (!labelMatRef.current) {
       // Log all meshes so developer can identify label mesh name if heuristic misses
@@ -128,7 +131,11 @@ function CupScene({ name, warning }: LabelFields) {
     textureRef.current.needsUpdate = true
   }, [name, warning])
 
-  return <primitive object={scene} scale={1.8} position={[0, -0.4, 0]} />
+  return (
+    <Center>
+      <primitive object={scene} />
+    </Center>
+  )
 }
 
 // R3F mesh shown while GLB is loading
