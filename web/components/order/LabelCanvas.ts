@@ -4,7 +4,8 @@ export interface LabelFields {
 }
 
 export function drawLabel(canvas: HTMLCanvasElement, fields: LabelFields): void {
-  const ctx = canvas.getContext('2d')!
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('LabelCanvas: failed to get 2D context')
   const w = canvas.width
   const h = canvas.height
 
@@ -29,6 +30,7 @@ export function drawLabel(canvas: HTMLCanvasElement, fields: LabelFields): void 
   ctx.fillText('1234 PHARM', w * 0.97, h * 0.065)
   ctx.textAlign = 'left'
   ctx.textBaseline = 'alphabetic'
+  // textBaseline explicitly reset to 'alphabetic' after header 'middle' usage
 
   // RX number
   ctx.fillStyle = '#1A1A1A'
@@ -71,7 +73,7 @@ export function drawLabel(canvas: HTMLCanvasElement, fields: LabelFields): void 
   ctx.fillText('60 ML Of True FUN', w * 0.03, baseY)
   ctx.fillText('QTY Infinite, Discard After...', w * 0.03, baseY + lineH)
   ctx.fillText('DOCTOR: LIFE', w * 0.03, baseY + lineH * 2)
-  ctx.fillText('MAY REFILL WHEN EVER THE FEELS HIT', w * 0.03, baseY + lineH * 3)
+  ctx.fillText('MAY REFILL WHENEVER THE FEELS HIT', w * 0.03, baseY + lineH * 3)
 }
 
 function clipText(
@@ -111,7 +113,9 @@ function wrapText(
       line = word
       currentY += lineHeight
     } else {
-      line = test
+      line = ctx.measureText(test).width > maxWidth
+        ? clipText(ctx, test, maxWidth)
+        : test
     }
   }
   if (line && drawn < maxLines) {
