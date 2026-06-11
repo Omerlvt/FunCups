@@ -55,12 +55,14 @@ function CupScene({ name, warning }: LabelFields) {
 
     if (!labelMatRef.current) {
       // Log all meshes so developer can identify label mesh name if heuristic misses
-      scene.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          const mat = child.material as THREE.MeshStandardMaterial
-          console.log('[CupViewer] mesh:', child.name, '| material:', mat?.name)
-        }
-      })
+      if (process.env.NODE_ENV === 'development') {
+        scene.traverse((child) => {
+          if (child instanceof THREE.Mesh) {
+            const mat = Array.isArray(child.material) ? child.material[0] : child.material
+            console.log('[CupViewer] mesh:', child.name, '| material:', (mat as THREE.MeshStandardMaterial)?.name)
+          }
+        })
+      }
 
       let found: THREE.MeshStandardMaterial | null = null
 
@@ -68,9 +70,10 @@ function CupScene({ name, warning }: LabelFields) {
       scene.traverse((child) => {
         if (found) return
         if (child instanceof THREE.Mesh) {
-          const mat = child.material as THREE.MeshStandardMaterial
+          const mat = Array.isArray(child.material) ? child.material[0] : child.material
+          if (!(mat instanceof THREE.MeshStandardMaterial)) return
           const n = child.name.toLowerCase()
-          const m = (mat?.name ?? '').toLowerCase()
+          const m = (mat.name ?? '').toLowerCase()
           if (n.includes('label') || n.includes('sticker') || m.includes('label') || m.includes('sticker')) {
             found = mat
           }
@@ -82,20 +85,29 @@ function CupScene({ name, warning }: LabelFields) {
         scene.traverse((child) => {
           if (found) return
           if (child instanceof THREE.Mesh) {
-            const mat = child.material as THREE.MeshStandardMaterial
-            if (mat?.map) found = mat
+            const mat = Array.isArray(child.material) ? child.material[0] : child.material
+            if (!(mat instanceof THREE.MeshStandardMaterial)) return
+            if (mat.map) found = mat
           }
         })
       }
 
       if (found) {
-        labelMatRef.current = found
+        const mat: THREE.MeshStandardMaterial = found
+        labelMatRef.current = mat
         const texture = textureRef.current
         if (texture) {
-          ;(found as THREE.MeshStandardMaterial).map = texture
-          ;(found as THREE.MeshStandardMaterial).needsUpdate = true
+          mat.map = texture
+          mat.needsUpdate = true
         }
       }
+    }
+
+    return () => {
+      textureRef.current?.dispose()
+      textureRef.current = null
+      canvasRef.current = null
+      labelMatRef.current = null
     }
   }, [scene])
 
