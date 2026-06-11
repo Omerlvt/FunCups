@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useRef } from 'react'
+import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
@@ -35,7 +35,8 @@ export default function CupViewer({ name, warning, className }: CupViewerProps) 
 }
 
 function CupScene({ name, warning }: LabelFields) {
-  const { scene } = useGLTF('/ceramic fun cup keyshot.glb')
+  const { scene: rawScene } = useGLTF('/ceramic fun cup keyshot.glb')
+  const scene = useMemo(() => rawScene.clone(true), [rawScene])
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const textureRef = useRef<THREE.CanvasTexture | null>(null)
   const labelMatRef = useRef<THREE.MeshStandardMaterial | null>(null)
@@ -109,6 +110,10 @@ function CupScene({ name, warning }: LabelFields) {
     }
 
     return () => {
+      if (labelMatRef.current) {
+        labelMatRef.current.map = null
+        labelMatRef.current.needsUpdate = true
+      }
       textureRef.current?.dispose()
       textureRef.current = null
       canvasRef.current = null
