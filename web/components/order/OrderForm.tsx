@@ -21,12 +21,15 @@ export default function OrderForm({
   onSkuChange,
 }: OrderFormProps) {
   const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '972500000000'
+  if (process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_WHATSAPP_NUMBER) {
+    console.warn('[OrderForm] NEXT_PUBLIC_WHATSAPP_NUMBER is not set — using dummy fallback')
+  }
   const skuLabel = sku === 'single' ? 'Single Dose (כוס אחת)' : 'Full Prescription (4 כוסות)'
 
   const waText = [
     'שלום! רוצה להזמין FunCups 🎉',
     `📦 מוצר: ${skuLabel}`,
-    `👤 שם: ${name}`,
+    `👤 שם: ${name.trim()}`,
     warning ? `⚠️ אזהרה: ${warning}` : '',
   ]
     .filter(Boolean)
@@ -71,12 +74,14 @@ export default function OrderForm({
       {/* Name field */}
       <div>
         <label
+          htmlFor="order-name"
           className="block text-xs font-semibold text-stone uppercase mb-2"
           style={{ letterSpacing: '0.15em' }}
         >
           שם המטופל
         </label>
         <input
+          id="order-name"
           type="text"
           value={name}
           onChange={(e) => onNameChange(e.target.value)}
@@ -89,13 +94,16 @@ export default function OrderForm({
       {/* Warning field */}
       <div>
         <label
+          htmlFor="order-warning"
           className="block text-xs font-semibold text-stone uppercase mb-2"
           style={{ letterSpacing: '0.15em' }}
         >
           אזהרה
         </label>
         <textarea
+          id="order-warning"
           rows={2}
+          maxLength={500}
           value={warning}
           onChange={(e) => onWarningChange(e.target.value)}
           placeholder="Sobriety is a myth caused by dangerously low alcohol levels."
@@ -105,21 +113,26 @@ export default function OrderForm({
       </div>
 
       {/* WhatsApp CTA */}
-      <a
-        href={canOrder ? waHref : undefined}
-        target={canOrder ? '_blank' : undefined}
-        rel="noopener noreferrer"
-        aria-disabled={!canOrder}
-        className={[
-          'flex items-center justify-center gap-3 w-full rounded-full py-4 px-6 text-sm font-bold transition-all duration-200',
-          canOrder
-            ? 'bg-accent text-bg hover:bg-accent-dark cursor-pointer'
-            : 'bg-ink/10 text-stone cursor-not-allowed pointer-events-none',
-        ].join(' ')}
-      >
-        <WhatsAppIcon />
-        שלח הזמנה ב-WhatsApp
-      </a>
+      {canOrder ? (
+        <a
+          href={waHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-3 w-full rounded-full py-4 px-6 text-sm font-bold transition-all duration-200 bg-accent text-bg hover:bg-accent-dark cursor-pointer"
+        >
+          <WhatsAppIcon />
+          שלח הזמנה ב-WhatsApp
+        </a>
+      ) : (
+        <button
+          type="button"
+          disabled
+          className="flex items-center justify-center gap-3 w-full rounded-full py-4 px-6 text-sm font-bold transition-all duration-200 bg-ink/10 text-stone cursor-not-allowed"
+        >
+          <WhatsAppIcon />
+          שלח הזמנה ב-WhatsApp
+        </button>
+      )}
 
       {!canOrder && (
         <p className="text-center text-xs text-stone -mt-3">
