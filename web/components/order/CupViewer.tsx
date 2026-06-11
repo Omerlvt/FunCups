@@ -74,7 +74,12 @@ function CupScene({ name, warning }: LabelFields) {
           if (!(mat instanceof THREE.MeshStandardMaterial)) return
           const n = child.name.toLowerCase()
           const m = (mat.name ?? '').toLowerCase()
-          if (n.includes('label') || n.includes('sticker') || m.includes('label') || m.includes('sticker')) {
+          // Also match the exact mesh name found in the GLB ("shot glass kol kore keyshot")
+          if (
+            n.includes('label') || n.includes('sticker') ||
+            m.includes('label') || m.includes('sticker') ||
+            child.name === 'shot glass kol kore keyshot'
+          ) {
             found = mat
           }
         }
